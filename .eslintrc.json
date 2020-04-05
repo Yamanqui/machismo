@@ -21,8 +21,7 @@
     },
     "plugins": [
         "react",
-        "@typescript-eslint",
-        "eslint-plugin-jest"
+        "@typescript-eslint"
     ],
     "settings": {
         "import/resolver": {
@@ -38,14 +37,14 @@
     },
     "rules": {
         "import/extensions": "off",
-        "react/jsx-filename-extension": [
-            1,
+        "react/jsx-filename-extension": [1,
             {
                 "extensions": [
                     ".tsx",
                     ".jsx"
                 ]
             }
-        ]
+        ],
+        "react/jsx-one-expression-per-line": 0
     }
 }
