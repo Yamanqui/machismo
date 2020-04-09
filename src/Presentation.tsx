@@ -2,6 +2,7 @@ import React from 'react';
 import {
   Deck, Slide, Heading, Text, Image, FlexBox,
 } from 'spectacle';
+import Pyramid from './Components/Pyramid';
 import lentes from './Images/Lentes.svg';
 
 const theme = {
@@ -26,6 +27,9 @@ function Presentation() {
         <Text textAlign="right">
           Ing. Arturo E. Rosales Jaime
         </Text>
+      </Slide>
+      <Slide>
+        <Pyramid />
       </Slide>
     </Deck>
   );
