@@ -2,11 +2,17 @@ import React from 'react';
 import axios from 'axios';
 import { FlexBox, Text, Heading } from 'spectacle';
 
+enum DataState {
+  Ready,
+  Loading,
+  Error,
+}
+
 type PyramidState = {
-  isLoading: boolean,
+  dataState: DataState,
   isPlaying: boolean,
   frame: number,
-}
+};
 
 type Data = {
   title: string,
@@ -15,12 +21,12 @@ type Data = {
   maxValue: number,
   males: PlotData[],
   females: PlotData[],
-}
+};
 
 type PlotData = {
   group: string,
   values: number[],
-}
+};
 
 function parseLine(line:string) {
   const lineRegex = /(?!\s*$)\s*(?:'([^'\\]*(?:\\[\S\s][^'\\]*)*)'|"([^"\\]*(?:\\[\S\s][^"\\]*)*)"|([^,\s]*(?:\s+[^,\s]+)*))\s*(?:,|$)/g;
@@ -107,19 +113,21 @@ class Pyramid extends React.Component<{}, PyramidState> {
     super(props);
 
     this.state = {
-      isLoading: false,
+      dataState: DataState.Ready,
       isPlaying: false,
       frame: 0,
     };
   }
 
   componentDidMount() {
-    this.setState({ isLoading: true });
+    this.setState({ dataState: DataState.Loading });
     document.addEventListener('keyup', this.handleKeyPressed);
 
     axios.get(`${process.env.PUBLIC_URL}/data/Nacional1910.csv`).then((result) => {
       this.data = parseCSV(result.data);
-      this.setState({ isLoading: false });
+      this.setState({ dataState: DataState.Ready });
+    }).catch(() => {
+      this.setState({ dataState: DataState.Error });
     });
   }
 
@@ -137,11 +145,11 @@ class Pyramid extends React.Component<{}, PyramidState> {
       this.stop();
       this.advance();
     }
-  }
+  };
 
   advance = () => {
-    const { isLoading } = this.state;
-    if (!isLoading) {
+    const { dataState } = this.state;
+    if (dataState === DataState.Ready) {
       this.setState((state) => {
         let nextFrame = state.frame + 1;
         if (nextFrame >= this.data!.times.length) {
@@ -150,11 +158,11 @@ class Pyramid extends React.Component<{}, PyramidState> {
         return ({ frame: nextFrame });
       });
     }
-  }
+  };
 
   back = () => {
-    const { isLoading } = this.state;
-    if (!isLoading) {
+    const { dataState } = this.state;
+    if (dataState === DataState.Ready) {
       this.setState((state) => {
         let prevFrame = state.frame - 1;
         if (prevFrame < 0) {
@@ -163,20 +171,20 @@ class Pyramid extends React.Component<{}, PyramidState> {
         return ({ frame: prevFrame });
       });
     }
-  }
+  };
 
   play = () => {
-    const { isLoading, isPlaying } = this.state;
-    if (!isLoading && !isPlaying) {
+    const { dataState, isPlaying } = this.state;
+    if (dataState === DataState.Ready && !isPlaying) {
       this.setState({ isPlaying: true });
       this.timer = window.setInterval(() => this.advance(), 30);
     }
-  }
+  };
 
   stop = () => {
     window.clearInterval(this.timer);
     this.setState({ isPlaying: false });
-  }
+  };
 
   playPause = () => {
     const { isPlaying } = this.state;
@@ -185,13 +193,16 @@ class Pyramid extends React.Component<{}, PyramidState> {
     } else {
       this.play();
     }
-  }
+  };
 
   render() {
-    const { isLoading, isPlaying, frame } = this.state;
+    const { dataState, isPlaying, frame } = this.state;
 
-    if (isLoading) {
+    if (dataState === DataState.Loading) {
       return (<Heading>Cargando...</Heading>);
+    }
+    if (dataState === DataState.Error) {
+      return (<Heading>Error...</Heading>);
     }
 
     return (
