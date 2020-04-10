@@ -1,6 +1,7 @@
 import React from 'react';
 import axios from 'axios';
-import { FlexBox, Text, Heading } from 'spectacle';
+import { FlexBox, Heading } from 'spectacle';
+import { VictoryBar, VictoryChart } from 'victory';
 
 enum DataState {
   Ready,
@@ -113,7 +114,7 @@ class Pyramid extends React.Component<{}, PyramidState> {
     super(props);
 
     this.state = {
-      dataState: DataState.Ready,
+      dataState: DataState.Loading,
       isPlaying: false,
       frame: 0,
     };
@@ -196,7 +197,7 @@ class Pyramid extends React.Component<{}, PyramidState> {
   };
 
   render() {
-    const { dataState, isPlaying, frame } = this.state;
+    const { dataState, frame } = this.state;
 
     if (dataState === DataState.Loading) {
       return (<Heading>Cargando...</Heading>);
@@ -207,15 +208,13 @@ class Pyramid extends React.Component<{}, PyramidState> {
 
     return (
       <FlexBox width="70%" alignSelf="center" bg="grey" flexDirection="column">
-        <Text>
-          Mostrando cuadro {frame} ({this.data?.times[frame]})
-          de {this.data?.times.length}
-        </Text>
-        <Text>
-          {isPlaying
-            ? 'Playing'
-            : '' }
-        </Text>
+        <VictoryChart horizontal domain={{ y: [0, this.data!.maxValue] }}>
+          <VictoryBar
+            data={this.data?.females}
+            x="group"
+            y={(datum:PlotData) => datum.values[frame]}
+          />
+        </VictoryChart>
       </FlexBox>
     );
   }

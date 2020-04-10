@@ -29,6 +29,24 @@ function Presentation() {
         </Text>
       </Slide>
       <Slide>
+        <FlexBox bg="grey" width="60%" height="100%" alignSelf="center">
+          <svg
+            viewBox="0 0 450 350"
+            style={{
+              background: '#ccdee8',
+              boxSizing: 'border-box',
+              display: 'inline',
+              padding: 0,
+              fontFamily: "'Fira Sans', sans-serif",
+              width: '100%',
+              height: 'auto',
+            }}
+          >
+            <rect x="0" y="0" width="10" height="30" fill="#f01616" />
+          </svg>
+        </FlexBox>
+      </Slide>
+      <Slide>
         <Pyramid />
       </Slide>
     </Deck>
