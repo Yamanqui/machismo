@@ -1,0 +1,23 @@
+{
+  "files": {
+    "main.css": "/machismo/static/css/main.5ecd60fb.chunk.css",
+    "main.js": "/machismo/static/js/main.b49319a8.chunk.js",
+    "main.js.map": "/machismo/static/js/main.b49319a8.chunk.js.map",
+    "runtime-main.js": "/machismo/static/js/runtime-main.e8887620.js",
+    "runtime-main.js.map": "/machismo/static/js/runtime-main.e8887620.js.map",
+    "static/js/2.445f9959.chunk.js": "/machismo/static/js/2.445f9959.chunk.js",
+    "static/js/2.445f9959.chunk.js.map": "/machismo/static/js/2.445f9959.chunk.js.map",
+    "index.html": "/machismo/index.html",
+    "precache-manifest.768b05d489bcbe2dd351cfa1f2c0c5bd.js": "/machismo/precache-manifest.768b05d489bcbe2dd351cfa1f2c0c5bd.js",
+    "service-worker.js": "/machismo/service-worker.js",
+    "static/css/main.5ecd60fb.chunk.css.map": "/machismo/static/css/main.5ecd60fb.chunk.css.map",
+    "static/js/2.445f9959.chunk.js.LICENSE.txt": "/machismo/static/js/2.445f9959.chunk.js.LICENSE.txt",
+    "static/media/Lentes.svg": "/machismo/static/media/Lentes.22f42be4.svg"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.e8887620.js",
+    "static/js/2.445f9959.chunk.js",
+    "static/css/main.5ecd60fb.chunk.css",
+    "static/js/main.b49319a8.chunk.js"
+  ]
+}
