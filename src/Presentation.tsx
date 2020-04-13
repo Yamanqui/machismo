@@ -19,10 +19,13 @@ function Presentation() {
       <Slide>
         <FlexBox>
           <Image src={lentes} />
-          <Heading>Del machismo ancestral a un nuevo paradigma de la masculinidad</Heading>
+          <Heading>
+            Del machismo ancestral a un nuevo paradigma de la masculinidad
+          </Heading>
         </FlexBox>
         <Text textAlign="center" fontSize="h3">
-          Una alternativa para la reconciliación y la equidad entre hombres y mujeres
+          Una alternativa para la reconciliación
+          y la equidad entre hombres y mujeres
         </Text>
         <Text textAlign="right">
           Ing. Arturo E. Rosales Jaime

@@ -29,24 +29,26 @@ type PlotData = {
   values: number[],
 };
 
-function parseLine(line:string) {
+function parseLine(line: string) {
   const lineRegex = /(?!\s*$)\s*(?:'([^'\\]*(?:\\[\S\s][^'\\]*)*)'|"([^"\\]*(?:\\[\S\s][^"\\]*)*)"|([^,\s]*(?:\s+[^,\s]+)*))\s*(?:,|$)/g;
-  const result:string[] = [];
-  line.replace(lineRegex, (match:string, g1:string, g2:string, g3:string) => {
-    let data = '';
-    if (g1 !== undefined) {
-      data = g1;
-    } else if (g2 !== undefined) {
-      data = g2;
-    } else if (g3 !== undefined) {
-      data = g3;
+  const result: string[] = [];
+  line.replace(
+    lineRegex, (match: string, g1: string, g2: string, g3: string) => {
+      let data = '';
+      if (g1 !== undefined) {
+        data = g1;
+      } else if (g2 !== undefined) {
+        data = g2;
+      } else if (g3 !== undefined) {
+        data = g3;
+      }
+      data.replace(/\\'/g, '\'');
+      data.replace(/\\"/g, '"');
+      // data.replace(/\\n/g, '\n');
+      result.push(data);
+      return '';
     }
-    data.replace(/\\'/g, '\'');
-    data.replace(/\\"/g, '"');
-    // data.replace(/\\n/g, '\n');
-    result.push(data);
-    return '';
-  });
+  );
   return result;
 }
 
@@ -59,7 +61,7 @@ function parseCSV(csvData: string): Data {
 
   let maxValue = 0;
 
-  const males:PlotData[] = [];
+  const males: PlotData[] = [];
 
   let nextLine = data.shift();
   while (nextLine !== undefined && nextLine[0] !== 'Mujeres') {
@@ -75,7 +77,7 @@ function parseCSV(csvData: string): Data {
     nextLine = data.shift();
   }
 
-  const females:PlotData[] = [];
+  const females: PlotData[] = [];
 
   nextLine = data.shift();
   while (nextLine !== undefined && nextLine[0] !== undefined) {
@@ -106,9 +108,9 @@ function parseCSV(csvData: string): Data {
 }
 
 class Pyramid extends React.Component<{}, PyramidState> {
-  data:Data | null = null;
+  data: Data | null = null;
 
-  timer:number | undefined = undefined;
+  timer: number | undefined = undefined;
 
   constructor(props: {}) {
     super(props);
@@ -212,7 +214,7 @@ class Pyramid extends React.Component<{}, PyramidState> {
           <VictoryBar
             data={this.data?.females}
             x="group"
-            y={(datum:PlotData) => datum.values[frame]}
+            y={(datum: PlotData) => datum.values[frame]}
           />
         </VictoryChart>
       </FlexBox>
