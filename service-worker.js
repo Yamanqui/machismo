@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js");
 
 importScripts(
-  "/machismo/precache-manifest.768b05d489bcbe2dd351cfa1f2c0c5bd.js"
+  "/machismo/precache-manifest.e639d299c81df2f7a6cf2c8c27ca6ead.js"
 );
 
 self.addEventListener('message', (event) => {
