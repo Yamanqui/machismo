@@ -2,8 +2,8 @@ import React from 'react';
 import {
   Deck, Slide, Heading, Text, Image, FlexBox,
 } from 'spectacle';
-import Pyramid from './Components/Pyramid';
-import lentes from './Images/Lentes.svg';
+import Pyramid from './components/Pyramid';
+import lentes from './images/lentes.svg';
 
 const theme = {
   colors: {
@@ -50,7 +50,10 @@ function Presentation() {
         </FlexBox>
       </Slide>
       <Slide>
-        <Pyramid />
+        <Pyramid file="Nacional1910_v2" />
+      </Slide>
+      <Slide>
+        <Heading>Siguiente</Heading>
       </Slide>
     </Deck>
   );

@@ -1,225 +1,224 @@
 import React from 'react';
 import axios from 'axios';
-import { FlexBox, Heading } from 'spectacle';
-import { VictoryBar, VictoryChart } from 'victory';
+import { Heading } from 'spectacle';
+import { VictoryChart, VictoryBar, VictoryAxis, VictoryLabel } from 'victory';
+import parseCSV from '../utils/csv-utils';
+import { DataState } from '../utils/types';
+import type { Data, PlotData } from '../utils/types';
+import useKeyboardControl from '../hooks/use-keyboard-control';
+import makeTheme, {
+  backgroundStyle,
+  singleLineGridStyle,
+  purpleBarStyle,
+  yellowBarStyle,
+  titleStyle,
+  leftTextStyle,
+  yearTextStyle,
+  totalsTextStyle,
+  totalsNumberStyle,
+  leftNumberStyle,
+  rightNumberStyle,
+} from '../utils/styles';
+import lentes from '../images/lentes.svg';
 
-enum DataState {
-  Ready,
-  Loading,
-  Error,
-}
 
-type PyramidState = {
-  dataState: DataState,
-  isPlaying: boolean,
-  frame: number,
+type PyramidProps = {
+  file: string,
+  width?: number,
+  height?: number,
+  padding?: {
+    top: number,
+    bottom: number,
+    left: number,
+    right: number,
+  },
+  yearLabelsFontSize?: number,
+  axisFontSize?: number,
+  speed?: number,
+  repeat?: boolean,
 };
 
-type Data = {
-  title: string,
-  sources: string[],
-  times: string[],
-  maxValue: number,
-  males: PlotData[],
-  females: PlotData[],
+Pyramid.defaultProps = {
+  width: 500,
+  height: 300,
+  padding: {
+    top: 50,
+    bottom: 50,
+    left: 90,
+    right: 50
+  },
+  yearLabelsFontSize: 9,
+  axisFontSize: 10,
+  speed: 15,
+  repeat: true,
 };
 
-type PlotData = {
-  group: string,
-  values: number[],
+type BackgroundProps = {
+  width: number,
+  height: number,
+  padding: {
+    top: number,
+    bottom: number,
+    left: number,
+    right: number,
+  }
 };
 
-function parseLine(line: string) {
-  const lineRegex = /(?!\s*$)\s*(?:'([^'\\]*(?:\\[\S\s][^'\\]*)*)'|"([^"\\]*(?:\\[\S\s][^"\\]*)*)"|([^,\s]*(?:\s+[^,\s]+)*))\s*(?:,|$)/g;
-  const result: string[] = [];
-  line.replace(
-    lineRegex, (match: string, g1: string, g2: string, g3: string) => {
-      let data = '';
-      if (g1 !== undefined) {
-        data = g1;
-      } else if (g2 !== undefined) {
-        data = g2;
-      } else if (g3 !== undefined) {
-        data = g3;
-      }
-      data.replace(/\\'/g, '\'');
-      data.replace(/\\"/g, '"');
-      // data.replace(/\\n/g, '\n');
-      result.push(data);
-      return '';
-    }
+function Background(props: BackgroundProps) {
+  const myWidth = props.width - props.padding.left - props.padding.right;
+  const myHeight = props.height - props.padding.top - props.padding.bottom;
+  const imageFillX = 0.5;
+  const imageFillY = 0.8;
+  const imageMargin = 10;
+
+  return (
+    <>
+      <rect
+        x={props.padding.left}
+        y={props.padding.top}
+        width={myWidth}
+        height={myHeight}
+        style={backgroundStyle}
+      />
+      <image
+        href={lentes}
+        x={props.padding.left + imageMargin}
+        y={props.padding.top + imageMargin}
+        width={(myWidth / 2) * imageFillX}
+        height={myHeight * imageFillY}
+      />
+      <image
+        href={lentes}
+        x={props.width - props.padding.right
+          - imageMargin - imageFillX * (myWidth / 2)}
+        y={props.padding.top + imageMargin}
+        width={(myWidth / 2) * imageFillX}
+        height={myHeight * imageFillY}
+      />
+    </>
   );
-  return result;
 }
 
+function Pyramid(props: PyramidProps) {
+  const [dataState, setDataState] = React.useState(DataState.Loading);
+  const [frame, setFrame] = React.useState(0);
+  const data = React.useRef<Data | null>(null);
 
-function parseCSV(csvData: string): Data {
-  const data = csvData.split('\n').map(parseLine);
-  const title = data.shift()![0];
-  const sources = data.shift()!.slice(1);
-  const times = data.shift()!.slice(1);
+  const labelMargin = 2;
 
-  let maxValue = 0;
+  const {
+    file,
+    width, height, padding,
+    yearLabelsFontSize, axisFontSize,
+    speed, repeat,
+  } = props;
 
-  const males: PlotData[] = [];
+  const theme = makeTheme(width!, height!, yearLabelsFontSize!, axisFontSize!);
 
-  let nextLine = data.shift();
-  while (nextLine !== undefined && nextLine[0] !== 'Mujeres') {
-    const group = nextLine.shift()!;
-    const values = nextLine.map((value) => {
-      const parsed = Number.parseFloat(value);
-      if (Number.isNaN(parsed)) return 0;
-      return parsed;
-    });
-    const localMaxValue = values.reduce((a, b) => Math.max(a, b));
-    maxValue = Math.max(maxValue, localMaxValue);
-    males.push({ group, values });
-    nextLine = data.shift();
+  React.useEffect(() => {
+    setDataState(DataState.Loading);
+    axios.get(`${process.env.PUBLIC_URL}/data/${file}.csv`).then((result) => {
+      data.current = parseCSV(result.data);
+      setDataState(DataState.Ready);
+    }).catch(() => setDataState(DataState.Error));
+  }, [file]);
+
+  useKeyboardControl(dataState, data.current!, setFrame, speed!, repeat!);
+
+  if (dataState === DataState.Loading) {
+    return (<Heading>Cargando...</Heading>);
+  }
+  if (dataState === DataState.Error) {
+    return (<Heading>Error...</Heading>);
   }
 
-  const females: PlotData[] = [];
-
-  nextLine = data.shift();
-  while (nextLine !== undefined && nextLine[0] !== undefined) {
-    const group = nextLine!.shift()!;
-    const values = nextLine.map((value) => {
-      const parsed = Number.parseFloat(value);
-      if (Number.isNaN(parsed)) return 0;
-      return parsed;
-    });
-    const localMaxValue = values.reduce((a, b) => Math.max(a, b));
-    maxValue = Math.max(maxValue, localMaxValue);
-    females.push({ group, values });
-    nextLine = data.shift();
-  }
-
-  let lastSource = '';
-  for (let i = 0; i < sources.length; i += 1) {
-    if (sources[i] === '') {
-      sources[i] = lastSource;
-    } else {
-      lastSource = sources[i];
-    }
-  }
-
-  return ({
-    title, sources, times, maxValue, males, females,
-  });
-}
-
-class Pyramid extends React.Component<{}, PyramidState> {
-  data: Data | null = null;
-
-  timer: number | undefined = undefined;
-
-  constructor(props: {}) {
-    super(props);
-
-    this.state = {
-      dataState: DataState.Loading,
-      isPlaying: false,
-      frame: 0,
-    };
-  }
-
-  componentDidMount() {
-    this.setState({ dataState: DataState.Loading });
-    document.addEventListener('keyup', this.handleKeyPressed);
-
-    axios.get(`${process.env.PUBLIC_URL}/data/Nacional1910.csv`).then((result) => {
-      this.data = parseCSV(result.data);
-      this.setState({ dataState: DataState.Ready });
-    }).catch(() => {
-      this.setState({ dataState: DataState.Error });
-    });
-  }
-
-  componentWillUnmount() {
-    document.removeEventListener('keyup', this.handleKeyPressed);
-  }
-
-  handleKeyPressed = (event: KeyboardEvent) => {
-    if (event.key === ' ') {
-      this.playPause();
-    } else if (event.key === 'ArrowUp') {
-      this.stop();
-      this.back();
-    } else if (event.key === 'ArrowDown') {
-      this.stop();
-      this.advance();
-    }
-  };
-
-  advance = () => {
-    const { dataState } = this.state;
-    if (dataState === DataState.Ready) {
-      this.setState((state) => {
-        let nextFrame = state.frame + 1;
-        if (nextFrame >= this.data!.times.length) {
-          nextFrame = 0;
-        }
-        return ({ frame: nextFrame });
-      });
-    }
-  };
-
-  back = () => {
-    const { dataState } = this.state;
-    if (dataState === DataState.Ready) {
-      this.setState((state) => {
-        let prevFrame = state.frame - 1;
-        if (prevFrame < 0) {
-          prevFrame = this.data!.times.length - 1;
-        }
-        return ({ frame: prevFrame });
-      });
-    }
-  };
-
-  play = () => {
-    const { dataState, isPlaying } = this.state;
-    if (dataState === DataState.Ready && !isPlaying) {
-      this.setState({ isPlaying: true });
-      this.timer = window.setInterval(() => this.advance(), 30);
-    }
-  };
-
-  stop = () => {
-    window.clearInterval(this.timer);
-    this.setState({ isPlaying: false });
-  };
-
-  playPause = () => {
-    const { isPlaying } = this.state;
-    if (isPlaying) {
-      this.stop();
-    } else {
-      this.play();
-    }
-  };
-
-  render() {
-    const { dataState, frame } = this.state;
-
-    if (dataState === DataState.Loading) {
-      return (<Heading>Cargando...</Heading>);
-    }
-    if (dataState === DataState.Error) {
-      return (<Heading>Error...</Heading>);
-    }
-
-    return (
-      <FlexBox width="70%" alignSelf="center" bg="grey" flexDirection="column">
-        <VictoryChart horizontal domain={{ y: [0, this.data!.maxValue] }}>
-          <VictoryBar
-            data={this.data?.females}
-            x="group"
-            y={(datum: PlotData) => datum.values[frame]}
-          />
-        </VictoryChart>
-      </FlexBox>
-    );
-  }
+  return (
+    <VictoryChart
+      horizontal
+      singleQuadrantDomainPadding={{ x: true }}
+      padding={padding!}
+      domainPadding={{ x: 6 }}
+      domain={{ y: [-data.current!.maxValue, data.current!.maxValue] }}
+      theme={theme}
+    >
+      <Background
+        width={width!}
+        height={height!}
+        padding={padding!}
+      />
+      <VictoryLabel
+        x={width! / 2}
+        y={0}
+        style={titleStyle}
+        text={data.current!.title}
+      />
+      <VictoryLabel
+        x={padding!.left}
+        y={height}
+        style={leftTextStyle}
+        text={data.current!.sources[frame]}
+      />
+      <VictoryLabel
+        x={width! - padding!.right}
+        y={padding!.top - 2 * labelMargin}
+        style={yearTextStyle}
+        text={`Año: ${data.current!.times[frame]}`}
+      />
+      <VictoryAxis
+        dependentAxis
+        crossAxis={false}
+        style={singleLineGridStyle}
+        tickCount={11}
+        tickFormat={(t) => Math.abs(t / data.current!.factor)}
+        label={data.current!.label}
+      />
+      <VictoryAxis offsetX={90} />
+      <VictoryBar
+        data={data.current!.left}
+        x="group"
+        y={(datum: PlotData) => datum.values[frame]}
+        style={purpleBarStyle}
+        barRatio={1}
+      />
+      <VictoryBar
+        data={data.current!.right}
+        x="group"
+        y={(datum: PlotData) => datum.values[frame]}
+        style={yellowBarStyle}
+        barRatio={1}
+      />
+      <VictoryLabel
+        x={padding!.left + labelMargin}
+        y={padding!.top + labelMargin}
+        style={leftNumberStyle}
+        text={[
+          (-data.current!.totalsLeft[frame]).toLocaleString('es-MX'),
+          `(${(100 * -data.current!.totalsLeft[frame] / data.current!.totals[frame]).toFixed(1)}%)`,
+        ]}
+      />
+      <VictoryLabel
+        x={width! - padding!.right - labelMargin}
+        y={padding!.top + labelMargin}
+        style={rightNumberStyle}
+        text={[
+          (data.current!.totalsRight[frame]).toLocaleString('es-MX'),
+          `(${(100 * data.current!.totalsRight[frame] / data.current!.totals[frame]).toFixed(1)}%)`,
+        ]}
+      />
+      <VictoryLabel
+        x={width! / 2 - labelMargin}
+        y={padding!.top - labelMargin}
+        style={totalsTextStyle}
+        text="Total: "
+      />
+      <VictoryLabel
+        x={width! / 2 + labelMargin}
+        y={padding!.top - labelMargin}
+        style={totalsNumberStyle}
+        text={data.current!.totals[frame].toLocaleString('es-MX')}
+      />
+    </VictoryChart>
+  );
 }
 
 export default Pyramid;
