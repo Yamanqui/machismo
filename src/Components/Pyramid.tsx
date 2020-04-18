@@ -39,18 +39,18 @@ type PyramidProps = {
 };
 
 Pyramid.defaultProps = {
-  width: 500,
+  width: 560,
   height: 300,
   padding: {
     top: 50,
     bottom: 50,
-    left: 90,
-    right: 50
+    left: 70,
+    right: 30
   },
   yearLabelsFontSize: 9,
   axisFontSize: 10,
   speed: 15,
-  repeat: true,
+  repeat: false,
 };
 
 type BackgroundProps = {
@@ -172,7 +172,7 @@ function Pyramid(props: PyramidProps) {
         tickFormat={(t) => Math.abs(t / data.current!.factor)}
         label={data.current!.label}
       />
-      <VictoryAxis offsetX={90} />
+      <VictoryAxis offsetX={padding!.left} />
       <VictoryBar
         data={data.current!.left}
         x="group"

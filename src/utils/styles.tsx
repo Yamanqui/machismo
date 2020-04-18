@@ -37,6 +37,7 @@ const darkNumberStyles = {
   ...baseLabelStyles,
   fill: darkBlue,
   fontFamily: monospace,
+  fontWeight: 700,
   verticalAnchor: 'start',
 };
 

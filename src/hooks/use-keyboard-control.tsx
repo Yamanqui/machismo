@@ -20,18 +20,23 @@ function useKeybordControl(
         back();
       } else if (event.key === 'ArrowDown') {
         stop();
-        advance();
+        advance(true);
       } else if (event.key === 'ArrowRight' || event.key === 'ArrowLeft') {
         stop();
       }
     }
 
-    function advance() {
+    function advance(forced = false) {
       if (dataState === DataState.Ready) {
         setFrame((currFrame) => {
           let nextFrame = currFrame + 1;
           if (nextFrame >= data.times.length) {
-            nextFrame = 0;
+            if (forced || repeat) {
+              nextFrame = 0;
+            } else {
+              stop();
+              nextFrame = currFrame;
+            }
           }
           return nextFrame;
         });
@@ -63,10 +68,10 @@ function useKeybordControl(
     }
 
     function playPause() {
-      if (timer.current !== undefined) {
-        stop();
-      } else {
+      if (timer.current === undefined) {
         play();
+      } else {
+        stop();
       }
     }
 
