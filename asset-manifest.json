@@ -1,24 +1,24 @@
 {
   "files": {
-    "main.css": "/machismo/static/css/main.f64bc350.chunk.css",
-    "main.js": "/machismo/static/js/main.7632e729.chunk.js",
-    "main.js.map": "/machismo/static/js/main.7632e729.chunk.js.map",
-    "runtime-main.js": "/machismo/static/js/runtime-main.e008ec5e.js",
-    "runtime-main.js.map": "/machismo/static/js/runtime-main.e008ec5e.js.map",
-    "static/js/2.2da442cd.chunk.js": "/machismo/static/js/2.2da442cd.chunk.js",
-    "static/js/2.2da442cd.chunk.js.map": "/machismo/static/js/2.2da442cd.chunk.js.map",
-    "index.html": "/machismo/index.html",
-    "precache-manifest.e639d299c81df2f7a6cf2c8c27ca6ead.js": "/machismo/precache-manifest.e639d299c81df2f7a6cf2c8c27ca6ead.js",
-    "service-worker.js": "/machismo/service-worker.js",
-    "static/css/main.f64bc350.chunk.css.map": "/machismo/static/css/main.f64bc350.chunk.css.map",
-    "static/js/2.2da442cd.chunk.js.LICENSE.txt": "/machismo/static/js/2.2da442cd.chunk.js.LICENSE.txt",
-    "static/media/fonts.css": "/machismo/static/media/Roboto-ThinItalic.35a9c89a.ttf",
-    "static/media/lentes.svg": "/machismo/static/media/lentes.22f42be4.svg"
+    "main.css": "/masculinidad/static/css/main.1e4c97e5.chunk.css",
+    "main.js": "/masculinidad/static/js/main.9d1c0d3b.chunk.js",
+    "main.js.map": "/masculinidad/static/js/main.9d1c0d3b.chunk.js.map",
+    "runtime-main.js": "/masculinidad/static/js/runtime-main.c280967a.js",
+    "runtime-main.js.map": "/masculinidad/static/js/runtime-main.c280967a.js.map",
+    "static/js/2.91cb373b.chunk.js": "/masculinidad/static/js/2.91cb373b.chunk.js",
+    "static/js/2.91cb373b.chunk.js.map": "/masculinidad/static/js/2.91cb373b.chunk.js.map",
+    "index.html": "/masculinidad/index.html",
+    "precache-manifest.f651baafa05909a0d3d9e70146a378d8.js": "/masculinidad/precache-manifest.f651baafa05909a0d3d9e70146a378d8.js",
+    "service-worker.js": "/masculinidad/service-worker.js",
+    "static/css/main.1e4c97e5.chunk.css.map": "/masculinidad/static/css/main.1e4c97e5.chunk.css.map",
+    "static/js/2.91cb373b.chunk.js.LICENSE.txt": "/masculinidad/static/js/2.91cb373b.chunk.js.LICENSE.txt",
+    "static/media/fonts.css": "/masculinidad/static/media/Roboto-ThinItalic.35a9c89a.ttf",
+    "static/media/lentes.svg": "/masculinidad/static/media/lentes.22f42be4.svg"
   },
   "entrypoints": [
-    "static/js/runtime-main.e008ec5e.js",
-    "static/js/2.2da442cd.chunk.js",
-    "static/css/main.f64bc350.chunk.css",
-    "static/js/main.7632e729.chunk.js"
+    "static/js/runtime-main.c280967a.js",
+    "static/js/2.91cb373b.chunk.js",
+    "static/css/main.1e4c97e5.chunk.css",
+    "static/js/main.9d1c0d3b.chunk.js"
   ]
 }
